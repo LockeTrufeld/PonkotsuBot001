@@ -43,7 +43,6 @@ async def on_ready():
 # EVENT LISTENER FOR WHEN A NEW MESSAGE IS SENT TO A CHANNEL.
 @bot.event
 async def on_message(message):
-    # CHECKS IF THE MESSAGE THAT WAS SENT IS EQUAL TO "HELLO".
     print(message.content)
     
     if message.author == bot.user:
@@ -59,15 +58,22 @@ async def on_message(message):
     else:
         await send_message(message, user_message, is_private=False)
 
+unresponded_counter = 0
 @bot.event
 async def send_message(message, user_message, is_private):
+    global unresponded_counter
+    response = responses.handle_response(user_message)
     try:
-        response = responses.handle_response(user_message)
         await message.author.send(response) if is_private else await message.channel.send(response)
+        unresponded_counter = 0
     except Exception as e:
+        unresponded_counter += 1
+        print(unresponded_counter)
+        if unresponded_counter % 50 == 0:
+            await message.channel.send('Can we talk about something more interesting instead?')
         print(e)
 
-
+    # CHECKS IF THE MESSAGE THAT WAS SENT IS EQUAL TO "HELLO".
     #elif message.content == "hello":
         # SENDS BACK A MESSAGE TO THE CHANNEL.
         #await message.channel.send("Ya'hallo~")
