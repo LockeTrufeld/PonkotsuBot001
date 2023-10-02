@@ -1,12 +1,11 @@
 # IMPORT DISCORD.PY. ALLOWS ACCESS TO DISCORD'S API.
 import discord
 import responses
-#intents = discord.Intents(messages=True, guilds=True)
-#intents.reactions = True
 
 
 # IMPORT THE OS MODULE.
 import os
+import random
 
 # IMPORT LOAD_DOTENV FUNCTION FROM DOTENV MODULE.
 from dotenv import load_dotenv
@@ -48,11 +47,18 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
+    p_message = message.content.lower()
+
     username = str(message.author)
     user_message = str(message.content)
     channel = str(message.channel)
 
-    if user_message[0] == '?':
+    if any([keyword in [p_message] for keyword in ('fish', 'feesh', 'swim', 'fin')]):
+        list = ["🐟", "🐠", "🐡"]
+        reaction = (list[random.randint(0,2)])
+        await message.add_reaction(reaction)
+
+    elif user_message[0] == '?':
         user_message = user_message[1:]
         await send_message(message, user_message, is_private=True)
     else:
@@ -69,7 +75,7 @@ async def send_message(message, user_message, is_private):
     except Exception as e:
         unresponded_counter += 1
         print(unresponded_counter)
-        if unresponded_counter % 50 == 0:
+        if unresponded_counter % 150 == 0:
             await message.channel.send('Can we talk about something more interesting instead?')
         print(e)
 
