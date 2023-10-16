@@ -53,30 +53,32 @@ async def on_message(message):
     user_message = str(message.content)
     channel = str(message.channel)
 
-    if any([keyword in [p_message] for keyword in ('fish', 'feesh', 'swim', 'fin')]):
+    if any([keyword in p_message for keyword in ('fish', 'feesh', 'swim', 'fin')]):
         list = ["🐟", "🐠", "🐡"]
         reaction = (list[random.randint(0,2)])
         await message.add_reaction(reaction)
 
     elif user_message[0] == '?':
         user_message = user_message[1:]
-        await send_message(message, user_message, is_private=True)
+        await send_message(message, username, user_message, is_private=True)
     else:
-        await send_message(message, user_message, is_private=False)
+        await send_message(message, username, user_message, is_private=False)
+
+
 
 unresponded_counter = 0
 @bot.event
-async def send_message(message, user_message, is_private):
+async def send_message(message, username, user_message, is_private):
     global unresponded_counter
-    response = responses.handle_response(user_message)
+    response = responses.handle_response(username, user_message)
     try:
         await message.author.send(response) if is_private else await message.channel.send(response)
         unresponded_counter = 0
     except Exception as e:
         unresponded_counter += 1
-        print(unresponded_counter)
+        #print(unresponded_counter)
         if unresponded_counter % 150 == 0:
-            await message.channel.send('Can we talk about something more interesting instead?')
+            await message.channel.send("I'm bored.")
         print(e)
 
     # CHECKS IF THE MESSAGE THAT WAS SENT IS EQUAL TO "HELLO".
